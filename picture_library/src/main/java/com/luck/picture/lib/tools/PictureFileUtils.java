@@ -86,7 +86,7 @@ public class PictureFileUtils {
                     context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) : context.getCacheDir();
         } else {
             rootDir = state.equals(Environment.MEDIA_MOUNTED) ?
-                    Environment.getExternalStorageDirectory() : context.getCacheDir();
+                    context.getExternalFilesDir(null) : context.getCacheDir();
         }
 
         File folderDir = new File(rootDir.getAbsolutePath() + parentPath);

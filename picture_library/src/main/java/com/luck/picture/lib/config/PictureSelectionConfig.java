@@ -66,6 +66,8 @@ public final class PictureSelectionConfig implements Parcelable {
     public boolean isDragFrame;
 
     public List<LocalMedia> selectionMedias;
+    public String noticeMsg;
+    public String useMag;
 
     private void reset() {
         mimeType = PictureConfig.TYPE_IMAGE;
@@ -112,6 +114,8 @@ public final class PictureSelectionConfig implements Parcelable {
         suffixType = PictureFileUtils.POSTFIX;
         sizeMultiplier = 0.5f;
         selectionMedias = new ArrayList<>();
+        noticeMsg = "";
+        useMag = "";
     }
 
     public static PictureSelectionConfig getInstance() {
@@ -179,6 +183,8 @@ public final class PictureSelectionConfig implements Parcelable {
         dest.writeByte(this.synOrAsy ? (byte) 1 : (byte) 0);
         dest.writeByte(this.isDragFrame ? (byte) 1 : (byte) 0);
         dest.writeTypedList(this.selectionMedias);
+        dest.writeString(this.noticeMsg);
+        dest.writeString(this.useMag);
     }
 
     public PictureSelectionConfig() {
@@ -229,6 +235,8 @@ public final class PictureSelectionConfig implements Parcelable {
         this.synOrAsy = in.readByte() != 0;
         this.isDragFrame = in.readByte() != 0;
         this.selectionMedias = in.createTypedArrayList(LocalMedia.CREATOR);
+        this.noticeMsg = in.readString();
+        this.useMag = in.readString();
     }
 
     public static final Parcelable.Creator<PictureSelectionConfig> CREATOR = new Parcelable.Creator<PictureSelectionConfig>() {

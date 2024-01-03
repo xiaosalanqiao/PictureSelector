@@ -42,6 +42,7 @@ import com.luck.picture.lib.rxbus2.Subscribe;
 import com.luck.picture.lib.rxbus2.ThreadMode;
 import com.luck.picture.lib.tools.DateUtils;
 import com.luck.picture.lib.tools.DoubleUtils;
+import com.luck.picture.lib.tools.PermissionNoticeUtils;
 import com.luck.picture.lib.tools.PhotoTools;
 import com.luck.picture.lib.tools.PictureFileUtils;
 import com.luck.picture.lib.tools.ScreenUtils;
@@ -94,6 +95,7 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
     private boolean isPlayAudio = false;
     private CustomDialog audioDialog;
     private int audioH;
+    private static boolean isRefuse = false;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -741,35 +743,82 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
 
     @Override
     public void onTakePhoto() {
-        // 启动相机拍照,先判断手机是否有拍照权限
-        rxPermissions.request(Manifest.permission.CAMERA).subscribe(new Observer<Boolean>() {
-            @Override
-            public void onSubscribe(Disposable d) {
+        if (isRefuse && config.noticeMsg != null && config.noticeMsg.length() > 0) {
+            PermissionNoticeUtils.noticeSetting(this, config.noticeMsg);
+        } else if (config.useMag != null && config.useMag.length() > 0) {
+            PermissionNoticeUtils.noticePermissionUse(this, Manifest.permission.CAMERA, config.useMag, new PermissionNoticeUtils.NoticeResultCallback() {
+                @Override
+                public void confirm() {
+                    // 启动相机拍照,先判断手机是否有拍照权限
+                    rxPermissions.request(Manifest.permission.CAMERA).subscribe(new Observer<Boolean>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
 
-            }
+                        }
 
-            @Override
-            public void onNext(Boolean aBoolean) {
-                if (aBoolean) {
-                    startCamera();
-                } else {
-                    ToastManage.s(mContext, getString(R.string.picture_camera));
-                    if (config.camera) {
-                        closeActivity();
+                        @Override
+                        public void onNext(Boolean aBoolean) {
+                            if (aBoolean) {
+                                startCamera();
+                            } else {
+                                isRefuse = true;
+                                ToastManage.s(mContext, getString(R.string.picture_camera));
+                                if (config.camera) {
+                                    closeActivity();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+
+                        }
+
+                        @Override
+                        public void onComplete() {
+
+                        }
+                    });
+                }
+
+                @Override
+                public void cancel() {
+                    isRefuse = true;
+                }
+            });
+        } else {
+            // 启动相机拍照,先判断手机是否有拍照权限
+            rxPermissions.request(Manifest.permission.CAMERA).subscribe(new Observer<Boolean>() {
+                @Override
+                public void onSubscribe(Disposable d) {
+
+                }
+
+                @Override
+                public void onNext(Boolean aBoolean) {
+                    if (aBoolean) {
+                        startCamera();
+                    } else {
+                        isRefuse = true;
+                        ToastManage.s(mContext, getString(R.string.picture_camera));
+                        if (config.camera) {
+                            closeActivity();
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onError(Throwable e) {
+                @Override
+                public void onError(Throwable e) {
 
-            }
+                }
 
-            @Override
-            public void onComplete() {
+                @Override
+                public void onComplete() {
 
-            }
-        });
+                }
+            });
+        }
+
     }
 
     @Override

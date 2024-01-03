@@ -398,6 +398,16 @@ public class PictureSelectionModel {
         return this;
     }
 
+    public PictureSelectionModel setNoticeMsg(String msg){
+        selectionConfig.noticeMsg = msg;
+        return this;
+    }
+
+    public PictureSelectionModel setUseMsg(String msg){
+        selectionConfig.useMag = msg;
+        return this;
+    }
+
     /**
      * Start to select media and wait for result.
      *

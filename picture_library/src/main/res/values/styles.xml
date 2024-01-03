@@ -109,4 +109,12 @@
         <item name="picture.folder_checked_dot">@drawable/orange_oval</item>
     </style>
 
+    <style name="picture_notice_dialog" parent="android:style/Theme.Dialog">
+        <!-- 背景透明,设置圆角对话框必须设置背景透明，否则四角会有背景色小块-->
+        <item name="android:windowBackground">@color/transparent</item>
+        <!-- 没有标题 -->
+        <item name="android:windowNoTitle">true</item>
+        <!-- 背景模糊 -->
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
 </resources>
